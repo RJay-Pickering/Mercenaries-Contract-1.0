@@ -12,6 +12,7 @@ var can_dash = true
 var combo = 0
 var damage_output = 0
 var health = 100
+var is_damaged = false
 
 
 func _ready() -> void:
@@ -23,37 +24,37 @@ func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-
-	# Handle jump.
-	if Input.is_action_just_pressed("jump") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-	
-	# Handle dash.
-	if Input.is_action_just_pressed("dash") and can_dash:
-		dashing = true
-		can_dash = false
-		$dashing.start()
-		$can_dash.start()
-	
-	attack_handler()
-
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction := Input.get_axis("left", "right")
-	if direction:
-		if dashing:
-			velocity.x = direction * DASH_SPEED
-		else:
-			velocity.x = direction * SPEED
+	if !is_damaged:
+		# Handle jump.
+		if Input.is_action_just_pressed("jump") and is_on_floor():
+			velocity.y = JUMP_VELOCITY
 		
-		if Input.is_action_pressed("left"):
-			facing_position = "left"
-			$AnimatedSprite2D.flip_h = true
-		elif Input.is_action_pressed("right"):
-			facing_position = "right"
-			$AnimatedSprite2D.flip_h = false
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
+		# Handle dash.
+		if Input.is_action_just_pressed("dash") and can_dash:
+			dashing = true
+			can_dash = false
+			$dashing.start()
+			$can_dash.start()
+		
+		attack_handler()
+
+		# Get the input direction and handle the movement/deceleration.
+		# As good practice, you should replace UI actions with custom gameplay actions.
+		var direction := Input.get_axis("left", "right")
+		if direction:
+			if dashing:
+				velocity.x = direction * DASH_SPEED
+			else:
+				velocity.x = direction * SPEED
+			
+			if Input.is_action_pressed("left"):
+				facing_position = "left"
+				$AnimatedSprite2D.flip_h = true
+			elif Input.is_action_pressed("right"):
+				facing_position = "right"
+				$AnimatedSprite2D.flip_h = false
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED)
 	
 	if combo > 1:
 		status.text = "X" + str(combo)
@@ -117,6 +118,22 @@ func attack_handler():
 				is_attacking = false
 
 
+# Handle taking damage
+func take_damage(amount: int) -> void:
+	if not is_damaged:
+		is_damaged = true
+		health -= amount
+		if health < 0:
+			health = 0
+		damage_cooldown()
+
+
+# Damage cooldown handling
+func damage_cooldown() -> void:
+	await get_tree().create_timer(0.4).timeout
+	is_damaged = false
+
+
 func _on_dashing_timeout() -> void:
 	dashing = false
 
@@ -146,14 +163,18 @@ func _on_combo_timer_timeout() -> void:
 
 
 func _on_body_detection_body_entered(body: Node2D) -> void:
-	if body.name == "enemy" and dashing == true:
-		print("makes weak enemies stun")
+	if body.name == "enemy" and dashing == true and body.dashed_through == false:
+		body.dashed_through = true
+		body.loop_once = false
 	
 	elif body.name == "mid_enemy" and dashing == true or body.name == "big_enemy" and dashing == true or body.name == "boss" and dashing == true:
 		pass
 	
 	elif body.name == "enemy" or body.name == "mid_enemy" or body.name == "big_enemy" or body.name == "boss":
-		health -= body.damage_output
-		#var get_direction = global_position.direction_to(body.global_position)
-		#velocity = get_direction
-		#velocity.y = JUMP_VELOCITY
+		var knockback_dir = global_position.direction_to(body.global_position)
+		if knockback_dir.y > 0:
+			velocity.y = knockback_dir.y * -300
+		else:
+			velocity.y = knockback_dir.y + -300
+		velocity.x = knockback_dir.x * -300
+		take_damage(body.damage_output)

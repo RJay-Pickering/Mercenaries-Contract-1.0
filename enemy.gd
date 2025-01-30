@@ -12,10 +12,12 @@ var damage_output = 10
 var is_dead: bool = false
 var is_damaged: bool = false
 var is_chasing = false
+var dashed_through = false
+var loop_once = false
 
 @export var speed: float = 50.0
 @export var chase_speed: float = 100.0 # Speed when chasing the player
-@export var stop_distance: float = 64.5 # Distance to stop when near the player
+@export var stop_distance: float = 63.0 # Distance to stop when near the player
 
 func _ready() -> void:
 	velocity = Vector2.ZERO
@@ -25,6 +27,12 @@ func _physics_process(delta):
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 	
+	if dashed_through == true:
+		await get_tree().create_timer(1.0).timeout
+		if loop_once == false:
+			dashed_through = false
+			loop_once = true
+	
 	# Handle enemy death
 	if health <= 0 and not is_dead:
 		is_dead = true
@@ -33,9 +41,10 @@ func _physics_process(delta):
 	
 	# Check if damaged and apply knockback
 	if is_damaged:
+		dashed_through = false
 		var knockback_dir = global_position.direction_to(player.global_position)
 		velocity = knockback_dir * -250
-	else:
+	elif dashed_through == false:
 		if is_chasing:
 			chase_player()
 		else:
@@ -46,8 +55,9 @@ func _physics_process(delta):
 	var direction_to_player = (player.global_position - global_position).normalized()
 	# Update the direction based on the normalized direction_to_player
 	player_detection.rotation = direction_to_player.angle()
-	print(player_detection.get_collider())
 	if player_detection.is_colliding() and player_detection.get_collider().name == "player":
+		is_chasing = true
+	elif !ledgeCheckRight.is_colliding() or !ledgeCheckLeft.is_colliding():
 		is_chasing = true
 	else:
 		is_chasing = false
