@@ -1,0 +1,63 @@
+[gd_scene load_steps=8 format=3 uid="uid://cbi58p5yf7ti4"]
+
+[ext_resource type="Script" path="res://enemy.gd" id="1_srpca"]
+[ext_resource type="Texture2D" uid="uid://b81ff85d0q7au" path="res://assets/evil-y, the evil cube.png" id="2_3iyqj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jevuj"]
+atlas = ExtResource("2_3iyqj")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_i0vic"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jevuj")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y3684"]
+size = Vector2(62, 63)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mrxsu"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk8uq"]
+bg_color = Color(1, 0.45098, 0.517647, 1)
+
+[node name="enemy" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_srpca")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_i0vic")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_y3684")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = -32.0
+offset_top = -43.0
+offset_right = 32.0
+offset_bottom = -34.0
+theme_override_styles/background = SubResource("StyleBoxFlat_mrxsu")
+theme_override_styles/fill = SubResource("StyleBoxFlat_wk8uq")
+value = 100.0
+show_percentage = false
+
+[node name="left" type="RayCast2D" parent="."]
+position = Vector2(-31, 0)
+target_position = Vector2(-1, 39)
+collision_mask = 3
+
+[node name="right" type="RayCast2D" parent="."]
+position = Vector2(31, 0)
+target_position = Vector2(0, 39)
+collision_mask = 3
+
+[node name="player_detection" type="RayCast2D" parent="."]
+target_position = Vector2(288, 1)

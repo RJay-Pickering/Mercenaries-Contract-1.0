@@ -1,0 +1,176 @@
+[gd_scene load_steps=18 format=3 uid="uid://d1ns6eo6ix1np"]
+
+[ext_resource type="Script" path="res://player.gd" id="1_bysvt"]
+[ext_resource type="Texture2D" uid="uid://7xx1na5evsm0" path="res://assets/testy, the sprite.png" id="1_ph7ro"]
+[ext_resource type="Texture2D" uid="uid://cihfke4i545la" path="res://assets/testy attack.png" id="2_dkpar"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_53ts1"]
+atlas = ExtResource("2_dkpar")
+region = Rect2(0, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l6hue"]
+atlas = ExtResource("2_dkpar")
+region = Rect2(128, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5k7n7"]
+atlas = ExtResource("2_dkpar")
+region = Rect2(256, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_safk1"]
+atlas = ExtResource("2_dkpar")
+region = Rect2(128, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0t8l2"]
+atlas = ExtResource("2_dkpar")
+region = Rect2(0, 0, 128, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ymrem"]
+atlas = ExtResource("1_ph7ro")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ir3ob"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_53ts1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l6hue")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5k7n7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_safk1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0t8l2")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ymrem")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_uirha"]
+size = Vector2(62, 63)
+
+[sub_resource type="LabelSettings" id="LabelSettings_xnc4g"]
+font_size = 20
+font_color = Color(1, 0.214044, 0.362331, 1)
+outline_size = 2
+outline_color = Color(0.63092, 0, 0.230428, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6oeys"]
+size = Vector2(40, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lagt2"]
+size = Vector2(32, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lv0i4"]
+size = Vector2(64, 63)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ej13d"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5dxbg"]
+bg_color = Color(0.141176, 0.45098, 0.682353, 1)
+
+[node name="player" type="CharacterBody2D"]
+script = ExtResource("1_bysvt")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_ir3ob")
+animation = &"attack"
+frame = 4
+frame_progress = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_uirha")
+debug_color = Color(0.635706, 0.341405, 1, 0.42)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(0, -50)
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+
+[node name="Label" type="Label" parent="."]
+offset_left = -32.0
+offset_top = -63.0
+offset_right = 33.0
+offset_bottom = -35.0
+label_settings = SubResource("LabelSettings_xnc4g")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="dashing" type="Timer" parent="."]
+wait_time = 0.2
+
+[node name="can_dash" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="combo_timer" type="Timer" parent="."]
+
+[node name="attack_range" type="Area2D" parent="."]
+collision_layer = 3
+collision_mask = 3
+
+[node name="attack_right" type="CollisionShape2D" parent="attack_range"]
+position = Vector2(52, 0)
+shape = SubResource("RectangleShape2D_6oeys")
+disabled = true
+debug_color = Color(0.832019, 0, 0.139833, 0.42)
+
+[node name="attack_left" type="CollisionShape2D" parent="attack_range"]
+position = Vector2(-52, 0)
+shape = SubResource("RectangleShape2D_6oeys")
+disabled = true
+debug_color = Color(0.832019, 0, 0.139833, 0.42)
+
+[node name="attack_down" type="CollisionShape2D" parent="attack_range"]
+position = Vector2(0, 48)
+rotation = 1.5708
+shape = SubResource("RectangleShape2D_lagt2")
+disabled = true
+debug_color = Color(0.832019, 0, 0.139833, 0.42)
+
+[node name="attack_up" type="CollisionShape2D" parent="attack_range"]
+position = Vector2(0, -52)
+rotation = 1.5708
+shape = SubResource("RectangleShape2D_6oeys")
+disabled = true
+debug_color = Color(0.832019, 0, 0.139833, 0.42)
+
+[node name="body_detection" type="Area2D" parent="."]
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="body_detection"]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_lv0i4")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer"]
+offset_left = 44.0
+offset_top = 33.0
+offset_right = 489.0
+offset_bottom = 70.0
+theme_override_styles/background = SubResource("StyleBoxFlat_ej13d")
+theme_override_styles/fill = SubResource("StyleBoxFlat_5dxbg")
+value = 100.0
+show_percentage = false
+
+[connection signal="timeout" from="dashing" to="." method="_on_dashing_timeout"]
+[connection signal="timeout" from="can_dash" to="." method="_on_can_dash_timeout"]
+[connection signal="timeout" from="combo_timer" to="." method="_on_combo_timer_timeout"]
+[connection signal="body_entered" from="attack_range" to="." method="_on_attack_range_body_entered"]
+[connection signal="body_entered" from="body_detection" to="." method="_on_body_detection_body_entered"]
