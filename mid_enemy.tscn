@@ -1,10 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://cbi58p5yf7ti4"]
+[gd_scene load_steps=9 format=3 uid="uid://ce8cco8qt3edo"]
 
-[ext_resource type="Script" path="res://enemy.gd" id="1_srpca"]
-[ext_resource type="Texture2D" uid="uid://b81ff85d0q7au" path="res://assets/evil-y, the evil cube.png" id="2_3iyqj"]
+[ext_resource type="Script" path="res://enemy.gd" id="1_hq7ov"]
+[ext_resource type="Texture2D" uid="uid://b81ff85d0q7au" path="res://assets/evil-y, the evil cube.png" id="2_g13y7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jevuj"]
-atlas = ExtResource("2_3iyqj")
+atlas = ExtResource("2_g13y7")
 region = Rect2(0, 0, 64, 64)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_i0vic"]
@@ -27,13 +27,14 @@ bg_color = Color(0, 0, 0, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wk8uq"]
 bg_color = Color(1, 0.45098, 0.517647, 1)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_wwq3t"]
-size = Vector2(675.5, 124.5)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2fxny"]
+size = Vector2(576, 64)
 
-[node name="enemy" type="CharacterBody2D"]
+[node name="mid_enemy" type="CharacterBody2D"]
+scale = Vector2(2, 2)
 collision_layer = 2
 collision_mask = 2
-script = ExtResource("1_srpca")
+script = ExtResource("1_hq7ov")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_i0vic")
@@ -63,20 +64,23 @@ target_position = Vector2(0, 39)
 collision_mask = 3
 
 [node name="player_detection" type="RayCast2D" parent="."]
-rotation = 4.71239
-target_position = Vector2(0, 200)
-
-[node name="player_detection2" type="RayCast2D" parent="."]
+position = Vector2(0, 11)
 rotation = 1.5708
 target_position = Vector2(0, 200)
 
+[node name="player_detection2" type="RayCast2D" parent="."]
+position = Vector2(0, 11)
+rotation = 4.71239
+target_position = Vector2(0, 200)
+
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(-0.749999, 0.25)
+scale = Vector2(1.725, 3.225)
 
 [node name="vision_zones" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="vision_zones"]
-position = Vector2(0, -29.75)
-shape = SubResource("RectangleShape2D_wwq3t")
+shape = SubResource("RectangleShape2D_2fxny")
 
 [connection signal="screen_entered" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_entered"]
 [connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]

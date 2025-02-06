@@ -13,6 +13,8 @@ var combo = 0
 var damage_output = 0
 var health = 100
 var is_damaged = false
+var is_stunned = false
+var loop_once = false
 
 
 func _ready() -> void:
@@ -24,7 +26,7 @@ func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	if not is_on_floor():
 		velocity += get_gravity() * delta
-	if !is_damaged:
+	if !is_damaged and !is_stunned:
 		# Handle jump.
 		if Input.is_action_just_pressed("jump") and is_on_floor():
 			velocity.y = JUMP_VELOCITY
@@ -37,7 +39,7 @@ func _physics_process(delta: float) -> void:
 			$can_dash.start()
 		
 		attack_handler()
-
+		
 		# Get the input direction and handle the movement/deceleration.
 		# As good practice, you should replace UI actions with custom gameplay actions.
 		var direction := Input.get_axis("left", "right")
@@ -55,6 +57,13 @@ func _physics_process(delta: float) -> void:
 				$AnimatedSprite2D.flip_h = false
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
+	
+	if is_stunned == true:
+		if loop_once == false:
+			loop_once = true
+			await get_tree().create_timer(1.0).timeout
+			is_stunned = false
+			loop_once = false
 	
 	if combo > 1:
 		status.text = "X" + str(combo)
@@ -166,15 +175,41 @@ func _on_body_detection_body_entered(body: Node2D) -> void:
 	if body.name == "enemy" and dashing == true and body.dashed_through == false:
 		body.dashed_through = true
 		body.loop_once = false
+		body.stun_logic()
 	
 	elif body.name == "mid_enemy" and dashing == true or body.name == "big_enemy" and dashing == true or body.name == "boss" and dashing == true:
-		pass
+		is_stunned = true
+		var knockback_dir = global_position.direction_to(body.global_position)
+		
+		if $left.is_colliding() and $left.get_collider().name == "floor" or $right.is_colliding() and $right.get_collider().name == "floor":
+			if knockback_dir.y > 0:
+				velocity.y = knockback_dir.y * -300
+			else:
+				velocity.y = knockback_dir.y + -300
+			velocity.x = -knockback_dir.x * -400
+		else:
+			if knockback_dir.y > 0:
+				velocity.y = knockback_dir.y * -300
+			else:
+				velocity.y = knockback_dir.y + -300
+			velocity.x = knockback_dir.x * -300
+		await get_tree().create_timer(0.5).timeout
 	
 	elif body.name == "enemy" or body.name == "mid_enemy" or body.name == "big_enemy" or body.name == "boss":
+		is_stunned = true
 		var knockback_dir = global_position.direction_to(body.global_position)
-		if knockback_dir.y > 0:
-			velocity.y = knockback_dir.y * -300
+		
+		if $left.is_colliding() and $left.get_collider().name == "floor" or $right.is_colliding() and $right.get_collider().name == "floor":
+			print("left or right is touching")
+			if knockback_dir.y > 0:
+				velocity.y = knockback_dir.y * -300
+			else:
+				velocity.y = knockback_dir.y + -300
+			velocity.x = -knockback_dir.x * -400
 		else:
-			velocity.y = knockback_dir.y + -300
-		velocity.x = knockback_dir.x * -300
+			if knockback_dir.y > 0:
+				velocity.y = knockback_dir.y * -300
+			else:
+				velocity.y = knockback_dir.y + -300
+			velocity.x = knockback_dir.x * -300
 		take_damage(body.damage_output)

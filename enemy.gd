@@ -6,6 +6,8 @@ var direction = Vector2.RIGHT
 @onready var sprite: = $AnimatedSprite2D
 @onready var player: CharacterBody2D = $"../player"
 @onready var player_detection = $player_detection
+@onready var player_detection2 = $player_detection2
+
 
 var health = 100
 var damage_output = 10
@@ -14,6 +16,7 @@ var is_damaged: bool = false
 var is_chasing = false
 var dashed_through = false
 var loop_once = false
+var in_view = false
 
 @export var speed: float = 50.0
 @export var chase_speed: float = 100.0 # Speed when chasing the player
@@ -21,6 +24,7 @@ var loop_once = false
 
 func _ready() -> void:
 	velocity = Vector2.ZERO
+	print(player_detection2)
 
 func _physics_process(delta):
 	# Apply gravity if not on the floor
@@ -28,10 +32,12 @@ func _physics_process(delta):
 		velocity += get_gravity() * delta
 	
 	if dashed_through == true:
-		await get_tree().create_timer(1.0).timeout
 		if loop_once == false:
-			dashed_through = false
 			loop_once = true
+			await get_tree().create_timer(1.0).timeout
+			print("done stun")
+			dashed_through = false
+			loop_once = false
 	
 	# Handle enemy death
 	if health <= 0 and not is_dead:
@@ -51,15 +57,15 @@ func _physics_process(delta):
 			patrol()
 
 	move_and_slide()
-	# Calculate the direction to the player
-	var direction_to_player = (player.global_position - global_position).normalized()
-	# Update the direction based on the normalized direction_to_player
-	player_detection.rotation = direction_to_player.angle()
-	if player_detection.is_colliding() and player_detection.get_collider().name == "player":
+	## Calculate the direction to the player
+	#var direction_to_player = (player.global_position - global_position).normalized()
+	## Update the direction based on the normalized direction_to_player
+	#player_detection.rotation = direction_to_player.angle()
+	if player_detection.is_colliding() and player_detection.get_collider().name == "player" or player_detection2.is_colliding() and player_detection2.get_collider().name == "player":
 		is_chasing = true
 	elif !ledgeCheckRight.is_colliding() or !ledgeCheckLeft.is_colliding():
 		is_chasing = true
-	else:
+	elif not in_view:
 		is_chasing = false
 
 # Patrol behavior: move side-to-side until hitting a wall or ledge
@@ -104,3 +110,25 @@ func take_damage(amount: int) -> void:
 func damage_cooldown() -> void:
 	await get_tree().create_timer(0.4).timeout
 	is_damaged = false
+
+func stun_logic():
+	velocity = Vector2(0,0)
+
+
+#func _on_visible_on_screen_notifier_2d_screen_entered() -> void:
+	#on_screen = true
+#
+#
+#func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
+	#is_chasing = false
+	#on_screen = false
+
+
+func _on_vision_zones_body_entered(body: Node2D) -> void:
+	if body.name == "player":
+		in_view = true
+
+
+func _on_vision_zones_body_exited(body: Node2D) -> void:
+	if body.name == "player":
+		in_view = false

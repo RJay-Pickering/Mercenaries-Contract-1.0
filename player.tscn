@@ -167,7 +167,12 @@ offset_bottom = 70.0
 theme_override_styles/background = SubResource("StyleBoxFlat_ej13d")
 theme_override_styles/fill = SubResource("StyleBoxFlat_5dxbg")
 value = 100.0
-show_percentage = false
+
+[node name="left" type="RayCast2D" parent="."]
+target_position = Vector2(-52, 0)
+
+[node name="right" type="RayCast2D" parent="."]
+target_position = Vector2(52, 0)
 
 [connection signal="timeout" from="dashing" to="." method="_on_dashing_timeout"]
 [connection signal="timeout" from="can_dash" to="." method="_on_can_dash_timeout"]
