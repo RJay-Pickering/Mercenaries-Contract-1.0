@@ -24,7 +24,6 @@ var in_view = false
 
 func _ready() -> void:
 	velocity = Vector2.ZERO
-	print(player_detection2)
 
 func _physics_process(delta):
 	# Apply gravity if not on the floor
@@ -35,7 +34,6 @@ func _physics_process(delta):
 		if loop_once == false:
 			loop_once = true
 			await get_tree().create_timer(1.0).timeout
-			print("done stun")
 			dashed_through = false
 			loop_once = false
 	

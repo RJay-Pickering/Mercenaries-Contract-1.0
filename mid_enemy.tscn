@@ -28,7 +28,7 @@ bg_color = Color(0, 0, 0, 1)
 bg_color = Color(1, 0.45098, 0.517647, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2fxny"]
-size = Vector2(576, 64)
+size = Vector2(576, 97)
 
 [node name="mid_enemy" type="CharacterBody2D"]
 scale = Vector2(2, 2)
@@ -51,7 +51,6 @@ offset_bottom = -34.0
 theme_override_styles/background = SubResource("StyleBoxFlat_mrxsu")
 theme_override_styles/fill = SubResource("StyleBoxFlat_wk8uq")
 value = 100.0
-show_percentage = false
 
 [node name="left" type="RayCast2D" parent="."]
 position = Vector2(-31, 0)
@@ -80,6 +79,7 @@ scale = Vector2(1.725, 3.225)
 [node name="vision_zones" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="vision_zones"]
+position = Vector2(0, -16.5)
 shape = SubResource("RectangleShape2D_2fxny")
 
 [connection signal="screen_entered" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_entered"]

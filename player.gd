@@ -15,6 +15,8 @@ var health = 100
 var is_damaged = false
 var is_stunned = false
 var loop_once = false
+var jump_count = 0
+var has_jumped = false
 
 
 func _ready() -> void:
@@ -23,20 +25,47 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	$CanvasLayer/ProgressBar.value = health
+	if health <= 0:
+		get_tree().reload_current_scene()
 	# Add the gravity.
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		# handles gravity going up
+		if velocity.y < 0:
+			velocity += get_gravity() * delta
+		# handles gravity going down by giving it more gravity to make jumping feel good
+		else:
+			velocity.y += 1500 * delta
+	else:
+		jump_count = 0
+		has_jumped = false
 	if !is_damaged and !is_stunned:
-		# Handle jump.
-		if Input.is_action_just_pressed("jump") and is_on_floor():
-			velocity.y = JUMP_VELOCITY
+		# Handle jump and if jump is big or small.
+		if Input.is_action_just_released("jump") and velocity.y < 0: # handles small jumps
+			velocity. y = JUMP_VELOCITY / 4
+		if Global.can_double_jump: # handles big jumps and double jumps
+			if Input.is_action_just_pressed("jump") and jump_count < 2 and not has_jumped:
+				jump_count += 1
+				if jump_count == 2:
+					has_jumped = true
+				velocity.y = JUMP_VELOCITY
+		else: # handles big jumps and single jumps
+			if Input.is_action_just_pressed("jump") and is_on_floor():
+				velocity.y = JUMP_VELOCITY
+				has_jumped = true
+			elif Input.is_action_just_pressed("jump") and not has_jumped:
+				velocity.y = JUMP_VELOCITY
+				has_jumped = true
 		
 		# Handle dash.
-		if Input.is_action_just_pressed("dash") and can_dash:
-			dashing = true
-			can_dash = false
-			$dashing.start()
-			$can_dash.start()
+		
+		if Global.can_charge_dash:
+			pass
+		else:
+			if Input.is_action_just_pressed("dash") and can_dash:
+				dashing = true
+				can_dash = false
+				$dashing.start()
+				$can_dash.start()
 		
 		attack_handler()
 		
@@ -58,7 +87,7 @@ func _physics_process(delta: float) -> void:
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
 	
-	if is_stunned == true:
+	if is_stunned == true and health > 0:
 		if loop_once == false:
 			loop_once = true
 			await get_tree().create_timer(1.0).timeout
@@ -69,7 +98,6 @@ func _physics_process(delta: float) -> void:
 		status.text = "X" + str(combo)
 	else:
 		status.text = ""
-	
 	move_and_slide()
 
 
@@ -152,7 +180,7 @@ func _on_can_dash_timeout() -> void:
 
 
 func _on_attack_range_body_entered(body: Node2D) -> void:
-	if body.name == "enemy":
+	if body.name == "enemy" or body.name == "mid_enemy":
 		combo += 1
 		$combo_timer.stop()
 		$combo_timer.start()
@@ -193,6 +221,7 @@ func _on_body_detection_body_entered(body: Node2D) -> void:
 			else:
 				velocity.y = knockback_dir.y + -300
 			velocity.x = knockback_dir.x * -300
+			damage_output = 0
 		await get_tree().create_timer(0.5).timeout
 	
 	elif body.name == "enemy" or body.name == "mid_enemy" or body.name == "big_enemy" or body.name == "boss":
@@ -200,7 +229,6 @@ func _on_body_detection_body_entered(body: Node2D) -> void:
 		var knockback_dir = global_position.direction_to(body.global_position)
 		
 		if $left.is_colliding() and $left.get_collider().name == "floor" or $right.is_colliding() and $right.get_collider().name == "floor":
-			print("left or right is touching")
 			if knockback_dir.y > 0:
 				velocity.y = knockback_dir.y * -300
 			else:
@@ -212,4 +240,5 @@ func _on_body_detection_body_entered(body: Node2D) -> void:
 			else:
 				velocity.y = knockback_dir.y + -300
 			velocity.x = knockback_dir.x * -300
+			damage_output = 0
 		take_damage(body.damage_output)
