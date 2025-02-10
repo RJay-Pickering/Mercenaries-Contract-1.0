@@ -9,6 +9,8 @@ var attacking_position = "right"
 var is_attacking = false
 var dashing = false
 var can_dash = true
+var charge_dash = false
+var hold_dash_count = 0
 var combo = 0
 var damage_output = 0
 var health = 100
@@ -57,13 +59,29 @@ func _physics_process(delta: float) -> void:
 				has_jumped = true
 		
 		# Handle dash.
-		
 		if Global.can_charge_dash:
-			pass
+			if Input.is_action_pressed("dash") and can_dash:
+				hold_dash_count += 0.5
+			
+			elif Input.is_action_just_released("dash") and can_dash:
+				if hold_dash_count < 5:
+					dashing = true
+					can_dash = false
+					charge_dash = false
+					$dashing.start()
+					$can_dash.start()
+				else:
+					dashing = true
+					can_dash = false
+					charge_dash = true
+					$dashing.start()
+					$can_dash.start()
+				hold_dash_count = 0
 		else:
 			if Input.is_action_just_pressed("dash") and can_dash:
 				dashing = true
 				can_dash = false
+				charge_dash = false
 				$dashing.start()
 				$can_dash.start()
 		
@@ -73,10 +91,7 @@ func _physics_process(delta: float) -> void:
 		# As good practice, you should replace UI actions with custom gameplay actions.
 		var direction := Input.get_axis("left", "right")
 		if direction:
-			if dashing:
-				velocity.x = direction * DASH_SPEED
-			else:
-				velocity.x = direction * SPEED
+			velocity.x = direction * SPEED
 			
 			if Input.is_action_pressed("left"):
 				facing_position = "left"
@@ -86,6 +101,19 @@ func _physics_process(delta: float) -> void:
 				$AnimatedSprite2D.flip_h = false
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
+		
+		# Pressing dash
+		if dashing and not charge_dash:
+			if facing_position == "right":
+				velocity.x = 1 * DASH_SPEED
+			elif facing_position == "left":
+				velocity.x = -1 * DASH_SPEED
+		# holding dash
+		elif dashing and charge_dash:
+			if facing_position == "right":
+				velocity.x = 1 * (DASH_SPEED * 2)
+			elif facing_position == "left":
+				velocity.x = -1 * (DASH_SPEED * 2)
 	
 	if is_stunned == true and health > 0:
 		if loop_once == false:
@@ -173,6 +201,7 @@ func damage_cooldown() -> void:
 
 func _on_dashing_timeout() -> void:
 	dashing = false
+	charge_dash = false
 
 
 func _on_can_dash_timeout() -> void:
@@ -201,6 +230,11 @@ func _on_combo_timer_timeout() -> void:
 
 func _on_body_detection_body_entered(body: Node2D) -> void:
 	if body.name == "enemy" and dashing == true and body.dashed_through == false:
+		body.dashed_through = true
+		body.loop_once = false
+		body.stun_logic()
+	
+	elif body.name == "mid_enemy" and charge_dash == true or body.name == "big_enemy" and charge_dash == true:
 		body.dashed_through = true
 		body.loop_once = false
 		body.stun_logic()

@@ -51,6 +51,7 @@ offset_bottom = -34.0
 theme_override_styles/background = SubResource("StyleBoxFlat_mrxsu")
 theme_override_styles/fill = SubResource("StyleBoxFlat_wk8uq")
 value = 100.0
+show_percentage = false
 
 [node name="left" type="RayCast2D" parent="."]
 position = Vector2(-31, 0)

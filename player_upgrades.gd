@@ -13,6 +13,8 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	if body.name == "player":
 		if Item_Skin.resource_path == "res://assets/double jump.png":
 			Global.can_double_jump = true
-		if Item_Skin.resource_path == "res://assets/charged dash.png":
+		elif Item_Skin.resource_path == "res://assets/charged dash.png":
 			Global.can_charge_dash = true
+		elif Item_Skin.resource_path == "res://assets/wall jump.png":
+			Global.can_wall_jump = true
 		queue_free()

@@ -55,7 +55,7 @@ tile_set = SubResource("TileSet_sfbqv")
 position = Vector2(1176, 552)
 
 [node name="player" parent="." instance=ExtResource("2_j4ruh")]
-position = Vector2(2264, -86)
+position = Vector2(2206, -88)
 
 [node name="DoubleJump" parent="." instance=ExtResource("5_j4xkd")]
 position = Vector2(1752, -153)
@@ -65,17 +65,17 @@ Item_Skin = ExtResource("3_44poc")
 position = Vector2(2330, -345)
 Item_Skin = ExtResource("4_yw0wi")
 
-[node name="WallJump" type="Sprite2D" parent="."]
-position = Vector2(821, -421)
-texture = ExtResource("5_pvdy0")
-
-[node name="BackgroundWalk" type="Sprite2D" parent="."]
-position = Vector2(274, -475)
-texture = ExtResource("6_jx08p")
+[node name="WallJump" parent="." instance=ExtResource("5_j4xkd")]
+position = Vector2(854, -407)
+Item_Skin = ExtResource("5_pvdy0")
 
 [node name="SecondWind" type="Sprite2D" parent="."]
 position = Vector2(47, 79)
 texture = ExtResource("7_q6eic")
+
+[node name="BackgroundWalk" type="Sprite2D" parent="."]
+position = Vector2(274, -475)
+texture = ExtResource("6_jx08p")
 
 [node name="mid_enemy" parent="." instance=ExtResource("10_g0b5e")]
 position = Vector2(528, -123)
