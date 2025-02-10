@@ -19,6 +19,9 @@ var is_stunned = false
 var loop_once = false
 var jump_count = 0
 var has_jumped = false
+var is_wall_sliding = false
+var wall_slide_gravity = 100
+var wall_jump_push = 100
 
 
 func _ready() -> void:
@@ -43,7 +46,7 @@ func _physics_process(delta: float) -> void:
 	if !is_damaged and !is_stunned:
 		# Handle jump and if jump is big or small.
 		if Input.is_action_just_released("jump") and velocity.y < 0: # handles small jumps
-			velocity. y = JUMP_VELOCITY / 4
+			velocity.y = JUMP_VELOCITY / 4
 		if Global.can_double_jump: # handles big jumps and double jumps
 			if Input.is_action_just_pressed("jump") and jump_count < 2 and not has_jumped:
 				jump_count += 1
@@ -85,13 +88,38 @@ func _physics_process(delta: float) -> void:
 				$dashing.start()
 				$can_dash.start()
 		
+		if Global.can_wall_jump:
+			if is_on_floor():
+				is_wall_sliding = false
+			else:
+				# Handling wall slide and jump
+				if is_on_wall():
+					if $left.is_colliding():
+						is_wall_sliding = true
+						velocity.y = min(velocity.y, wall_slide_gravity)
+						if Input.is_action_pressed("jump") and Input.is_action_pressed("right"):
+							velocity.y = JUMP_VELOCITY
+							velocity.x = 250
+					elif $right.is_colliding():
+						is_wall_sliding = true
+						velocity.y = min(velocity.y, wall_slide_gravity)
+						if Input.is_action_pressed("jump") and Input.is_action_pressed("left"):
+							velocity.y = JUMP_VELOCITY
+							velocity.x = -250
+					else:
+						is_wall_sliding = false
+				#else:
+					#is_wall_sliding = false
+
+		
 		attack_handler()
 		
 		# Get the input direction and handle the movement/deceleration.
 		# As good practice, you should replace UI actions with custom gameplay actions.
 		var direction := Input.get_axis("left", "right")
 		if direction:
-			velocity.x = direction * SPEED
+			if not is_wall_sliding:
+				velocity.x = direction * SPEED
 			
 			if Input.is_action_pressed("left"):
 				facing_position = "left"

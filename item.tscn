@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://player_upgrades.gd" id="1_1xq3d"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s5p6u"]
-size = Vector2(64, 64)
+size = Vector2(32, 32)
 
 [node name="Item" type="Node2D"]
 script = ExtResource("1_1xq3d")
