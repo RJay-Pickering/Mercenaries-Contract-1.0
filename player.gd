@@ -146,7 +146,7 @@ func _physics_process(delta: float) -> void:
 	if is_stunned == true and health > 0:
 		if loop_once == false:
 			loop_once = true
-			await get_tree().create_timer(1.0).timeout
+			await get_tree().create_timer(0.6).timeout
 			is_stunned = false
 			loop_once = false
 	
@@ -284,7 +284,9 @@ func _on_body_detection_body_entered(body: Node2D) -> void:
 				velocity.y = knockback_dir.y + -300
 			velocity.x = knockback_dir.x * -300
 			damage_output = 0
+		body.dashed_through = true
 		await get_tree().create_timer(0.5).timeout
+		body.dashed_through = false
 	
 	elif body.name == "enemy" or body.name == "mid_enemy" or body.name == "big_enemy" or body.name == "boss":
 		is_stunned = true
@@ -304,3 +306,6 @@ func _on_body_detection_body_entered(body: Node2D) -> void:
 			velocity.x = knockback_dir.x * -300
 			damage_output = 0
 		take_damage(body.damage_output)
+		body.dashed_through = true
+		await get_tree().create_timer(0.5).timeout
+		body.dashed_through = false
