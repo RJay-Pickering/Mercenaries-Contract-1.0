@@ -50,15 +50,20 @@ func _physics_process(delta: float) -> void:
 			velocity += get_gravity() * delta
 		# handles gravity going down by giving it more gravity to make jumping feel good
 		else:
-			velocity.y += 1500 * delta
+			velocity.y += 2500 * delta
 	else:
 		jump_count = 0
 		has_jumped = false
+	
+	# handles when the user jumps on the wall to not keep going up wall
+	if is_on_wall():
+		velocity.y += 2500 * delta
+	
 	if !is_damaged and !is_stunned and health > 0:
 		# Handle jump and if jump is big or small.
 		if Input.is_action_just_released("jump") and velocity.y < 0: # handles small jumps
-			velocity.y = JUMP_VELOCITY / 4
-		if Global.can_double_jump: # handles big jumps and double jumps
+			velocity.y = JUMP_VELOCITY / 2
+		if Global.can_double_jump: # handles double jumps
 			if Input.is_action_just_pressed("jump") and jump_count < 2 and not has_jumped:
 				jump_count += 1
 				if jump_count == 2:
@@ -71,60 +76,6 @@ func _physics_process(delta: float) -> void:
 			elif Input.is_action_just_pressed("jump") and not has_jumped:
 				velocity.y = JUMP_VELOCITY
 				has_jumped = true
-		
-		# Handle dash.
-		if Global.can_charge_dash:
-			if Input.is_action_pressed("dash") and can_dash:
-				hold_dash_count += 0.5
-			
-			elif Input.is_action_just_released("dash") and can_dash:
-				if hold_dash_count < 5:
-					dashing = true
-					can_dash = false
-					charge_dash = false
-					$dashing.start()
-					$can_dash.start()
-				else:
-					dashing = true
-					can_dash = false
-					charge_dash = true
-					$dashing.start()
-					$can_dash.start()
-				hold_dash_count = 0
-		else:
-			if Input.is_action_just_pressed("dash") and can_dash:
-				dashing = true
-				can_dash = false
-				charge_dash = false
-				$dashing.start()
-				$can_dash.start()
-		
-		if Global.can_wall_jump:
-			if is_on_floor():
-				is_wall_sliding = false
-			else:
-				# Handling wall slide and jump
-				if is_on_wall():
-					if $left.is_colliding():
-						is_wall_sliding = true
-						velocity.y = min(velocity.y, wall_slide_gravity)
-						if Input.is_action_pressed("jump") and Input.is_action_pressed("right"):
-							velocity.y = JUMP_VELOCITY
-							velocity.x = 250
-					elif $right.is_colliding():
-						is_wall_sliding = true
-						velocity.y = min(velocity.y, wall_slide_gravity)
-						if Input.is_action_pressed("jump") and Input.is_action_pressed("left"):
-							velocity.y = JUMP_VELOCITY
-							velocity.x = -250
-					else:
-						is_wall_sliding = false
-		
-		if Global.can_background_walk:
-			if dashing:
-				player_collision_handler(true)
-			else:
-				player_collision_handler(false)
 		
 		attack_handler()
 		
@@ -157,6 +108,65 @@ func _physics_process(delta: float) -> void:
 			elif facing_position == "left":
 				velocity.x = -1 * (DASH_SPEED * 2)
 	
+	# Handle dash.
+	if Global.can_charge_dash:
+		if Input.is_action_pressed("dash") and can_dash:
+			hold_dash_count += 0.5
+		
+		elif Input.is_action_just_released("dash") and can_dash:
+			if hold_dash_count < 5:
+				dashing = true
+				can_dash = false
+				charge_dash = false
+				$dashing.start()
+				$can_dash.start()
+			else:
+				dashing = true
+				can_dash = false
+				charge_dash = true
+				$dashing.start()
+				$can_dash.start()
+			hold_dash_count = 0
+	else:
+		if Input.is_action_just_pressed("dash") and can_dash:
+			dashing = true
+			can_dash = false
+			charge_dash = false
+			$dashing.start()
+			$can_dash.start()
+	
+	if Global.can_wall_jump:
+		if is_on_floor() and not is_on_wall() or is_on_floor():
+			is_wall_sliding = false
+		else:
+			if Input.is_action_pressed("down_attack"):
+				is_wall_sliding = false
+			else:
+				# Handling wall slide and jump
+				if $left.is_colliding():
+					print("left")
+					is_wall_sliding = true
+					velocity.y = min(velocity.y, wall_slide_gravity)
+					if Input.is_action_pressed("jump") and Input.is_action_pressed("right"):
+						velocity.y = JUMP_VELOCITY
+						velocity.x = 250
+				elif $right.is_colliding():
+					print("right")
+					is_wall_sliding = true
+					velocity.y = min(velocity.y, wall_slide_gravity)
+					if Input.is_action_pressed("jump") and Input.is_action_pressed("left"):
+						velocity.y = JUMP_VELOCITY
+						velocity.x = -250
+				else:
+					is_wall_sliding = false
+	
+	if Global.can_background_walk:
+		if dashing:
+			player_collision_handler(true)
+		else:
+			player_collision_handler(false)
+	
+	
 	if is_stunned == true and health > 0:
 		if loop_once == false:
 			loop_once = true
@@ -165,7 +175,7 @@ func _physics_process(delta: float) -> void:
 			loop_once = false
 	
 	if combo > 1:
-		status.text = "X" + str(combo)
+		status.text = "Combo:\nX" + str(combo)
 	else:
 		status.text = ""
 	

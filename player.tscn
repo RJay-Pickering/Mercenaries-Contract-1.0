@@ -96,7 +96,7 @@ frame_progress = 1.0
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_uirha")
-debug_color = Color(0.635706, 0.341405, 1, 0.42)
+debug_color = Color(0.635294, 0.341176, 1, 0.505882)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(0, -50)
@@ -104,10 +104,10 @@ drag_horizontal_enabled = true
 drag_vertical_enabled = true
 
 [node name="Label" type="Label" parent="."]
-offset_left = -32.0
-offset_top = -63.0
-offset_right = 33.0
-offset_bottom = -35.0
+offset_left = -37.0
+offset_top = -88.0
+offset_right = 40.0
+offset_bottom = -29.0
 label_settings = SubResource("LabelSettings_xnc4g")
 horizontal_alignment = 1
 autowrap_mode = 3
@@ -173,10 +173,10 @@ value = 100.0
 visible = false
 
 [node name="left" type="RayCast2D" parent="."]
-target_position = Vector2(-52, 0)
+target_position = Vector2(-38, 0)
 
 [node name="right" type="RayCast2D" parent="."]
-target_position = Vector2(52, 0)
+target_position = Vector2(38, 0)
 
 [connection signal="timeout" from="dashing" to="." method="_on_dashing_timeout"]
 [connection signal="timeout" from="can_dash" to="." method="_on_can_dash_timeout"]

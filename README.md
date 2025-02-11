@@ -1,4 +1,4 @@
-Make a new project to start making Gareth's move-set work and create a generic as F#@$ template platforming map. Do the starts and gets overtime stuff and upload it to Itch as a browser game to have Stanlee play-test and use it for map design and character art.
+sMake a new project to start making Gareth's move-set work and create a generic as F#@$ template platforming map. Do the starts and gets overtime stuff and upload it to Itch as a browser game to have Stanlee play-test and use it for map design and character art.
 
 Starts:
 	- walking ✅
@@ -20,9 +20,9 @@ Gets over time:
 	- Charged dash✅
 	- Wall jump✅
 	- Go through the background layer to interact in the background✅
-		- Goes through orange walls when dashing, and with this enabled
+		- *NOTE*: Goes through orange walls when dashing, and with this enabled
 	- Second wind (second life type thing)✅
-		- When they die and revive, health lowers until enemies or players die
+		- *NOTE*: When they die and revive, health lowers until enemies or players die
 
 Upgrades (do this once approved and discussed on how the enhancements look):
 	- Upgrade health (starts with 5 bars of health)
