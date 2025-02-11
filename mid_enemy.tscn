@@ -30,7 +30,7 @@ bg_color = Color(1, 0.45098, 0.517647, 1)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2fxny"]
 size = Vector2(576, 97)
 
-[node name="mid_enemy" type="CharacterBody2D"]
+[node name="mid_enemy" type="CharacterBody2D" groups=["enemy"]]
 scale = Vector2(2, 2)
 collision_layer = 2
 collision_mask = 2

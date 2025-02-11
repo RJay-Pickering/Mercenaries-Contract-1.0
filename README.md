@@ -4,8 +4,10 @@ Starts:
 	- walking ✅
 	- single jump ✅
 	- dash (basic) ✅
+		- Can dash when standing still ✅
 		- small enemies stun when dashed✅
-		- bigger enemies stun you when dashed✅
+		- Bigger enemies that are not bosses stun when charged dashed✅
+		- Bigger enemies that are not bosses will stun you when not charged dashed✅
 		- cannot dash more than once in the air.✅
 		- second delay before next dash✅
 	- basic up, down, left, right attacks.✅
@@ -15,14 +17,16 @@ Starts:
 	- Is still able to jump if they haven't jumped yet but are falling✅
 Gets over time:
 	- Double jump✅
-	- Charged dash
-	- Wall jump
-	- Second wind (second life type thing)
-	- Go through the background layer to interact in the background
+	- Charged dash✅
+	- Wall jump✅
+	- Go through the background layer to interact in the background✅
+		- Goes through orange walls when dashing, and with this enabled
+	- Second wind (second life type thing)✅
+		- When they die and revive, health lowers until enemies or players die
 
-Upgrades:
+Upgrades (do this once approved and discussed on how the enhancements look):
 	- Upgrade health (starts with 5 bars of health)
 	- Dash upgrades (how many times you can dash in the air)
 	- Rage upgrades (how long it lasts)
 	- Health items (stores however many items you have)
-	- Talismans/charm type thing (not an upgrade but benefits the player)
+	- Talismans/charm type thing (not an upgrade but benefits the player, maybe they could be how the user does the "gets over time"...)

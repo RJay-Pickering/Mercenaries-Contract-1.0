@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://w2sqct5gxp2u"]
+
+[ext_resource type="Script" path="res://main_menu.gd" id="1_g61rj"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_84rvc"]
+font_size = 64
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 10
+shadow_color = Color(0, 0.458824, 0.670588, 1)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 4
+script = ExtResource("1_g61rj")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 0
+offset_right = 1153.0
+offset_bottom = 648.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Demo"
+label_settings = SubResource("LabelSettings_84rvc")
+
+[node name="play" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "play"
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/play" to="." method="_on_play_pressed"]

@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 @onready var status = $Label
+@onready var second_wind_menu = $CanvasLayer/SecondWindMenu
 const SPEED = 450.0
 const DASH_SPEED = 900.0
 const JUMP_VELOCITY = -500.0
@@ -22,6 +23,7 @@ var has_jumped = false
 var is_wall_sliding = false
 var wall_slide_gravity = 100
 var wall_jump_push = 100
+var is_revived = false
 
 
 func _ready() -> void:
@@ -30,8 +32,17 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	$CanvasLayer/ProgressBar.value = health
-	if health <= 0:
-		get_tree().reload_current_scene()
+	if is_revived:
+		if get_tree().get_node_count_in_group("enemy") > 0:
+			health -= 0.02
+		else:
+			is_revived = false
+			Global.can_second_wind = true
+	if Global.can_second_wind and health <= 0:
+		second_wind_handle()
+	elif health <= 0:
+		var main_menu = ResourceLoader.load("res://main_menu.tscn")
+		get_tree().change_scene_to_packed(main_menu)
 	# Add the gravity.
 	if not is_on_floor():
 		# handles gravity going up
@@ -43,7 +54,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		jump_count = 0
 		has_jumped = false
-	if !is_damaged and !is_stunned:
+	if !is_damaged and !is_stunned and health > 0:
 		# Handle jump and if jump is big or small.
 		if Input.is_action_just_released("jump") and velocity.y < 0: # handles small jumps
 			velocity.y = JUMP_VELOCITY / 4
@@ -108,9 +119,12 @@ func _physics_process(delta: float) -> void:
 							velocity.x = -250
 					else:
 						is_wall_sliding = false
-				#else:
-					#is_wall_sliding = false
-
+		
+		if Global.can_background_walk:
+			if dashing:
+				player_collision_handler(true)
+			else:
+				player_collision_handler(false)
 		
 		attack_handler()
 		
@@ -154,7 +168,35 @@ func _physics_process(delta: float) -> void:
 		status.text = "X" + str(combo)
 	else:
 		status.text = ""
+	
 	move_and_slide()
+
+
+func second_wind_handle():
+	second_wind_menu.visible = true
+	player_collision_handler(true)
+	velocity = Vector2(0,0)
+	if second_wind_menu.status == "alive":
+		Global.can_second_wind = false
+		health = 100
+		second_wind_menu.visible = false
+		if get_tree().get_node_count_in_group("enemy") > 0:
+			is_revived = true
+		await get_tree().create_timer(0.7).timeout
+		player_collision_handler(false)
+
+
+func player_collision_handler(change: bool):
+	if change:
+		set_collision_layer_value(1, false)
+		set_collision_mask_value(1, false)
+		set_collision_layer_value(3, true)
+		set_collision_mask_value(3, true)
+	else:
+		set_collision_layer_value(1, true)
+		set_collision_mask_value(1, true)
+		set_collision_layer_value(3, false)
+		set_collision_mask_value(3, false)
 
 
 func attack_handler():

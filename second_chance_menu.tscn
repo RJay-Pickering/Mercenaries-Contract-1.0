@@ -1,0 +1,66 @@
+[gd_scene load_steps=4 format=3 uid="uid://ba8ndfm1w26hg"]
+
+[ext_resource type="Script" path="res://main_menu.gd" id="1_jwc77"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_gvavx"]
+font_size = 64
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+shadow_size = 10
+shadow_color = Color(0, 0.458824, 0.670588, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_x5dem"]
+font_size = 32
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_jwc77")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.281187, 0.281187, 0.281187, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+offset_right = 1153.0
+offset_bottom = 648.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "Your dead"
+label_settings = SubResource("LabelSettings_gvavx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="Label2" type="Label" parent="CenterContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "would you like to use the second wind ability?"
+label_settings = SubResource("LabelSettings_x5dem")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="yes" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Yes"
+
+[node name="no" type="Button" parent="CenterContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "No"
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/yes" to="." method="_on_yes_second_wind_pressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/VBoxContainer/no" to="." method="_on_no_second_wind_pressed"]

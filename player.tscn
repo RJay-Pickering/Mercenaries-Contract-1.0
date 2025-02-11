@@ -1,8 +1,9 @@
-[gd_scene load_steps=18 format=3 uid="uid://d1ns6eo6ix1np"]
+[gd_scene load_steps=19 format=3 uid="uid://d1ns6eo6ix1np"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_bysvt"]
 [ext_resource type="Texture2D" uid="uid://7xx1na5evsm0" path="res://assets/testy, the sprite.png" id="1_ph7ro"]
 [ext_resource type="Texture2D" uid="uid://cihfke4i545la" path="res://assets/testy attack.png" id="2_dkpar"]
+[ext_resource type="PackedScene" uid="uid://ba8ndfm1w26hg" path="res://second_chance_menu.tscn" id="4_w2j36"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_53ts1"]
 atlas = ExtResource("2_dkpar")
@@ -167,6 +168,9 @@ offset_bottom = 70.0
 theme_override_styles/background = SubResource("StyleBoxFlat_ej13d")
 theme_override_styles/fill = SubResource("StyleBoxFlat_5dxbg")
 value = 100.0
+
+[node name="SecondWindMenu" parent="CanvasLayer" instance=ExtResource("4_w2j36")]
+visible = false
 
 [node name="left" type="RayCast2D" parent="."]
 target_position = Vector2(-52, 0)

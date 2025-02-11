@@ -30,7 +30,7 @@ bg_color = Color(1, 0.45098, 0.517647, 1)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wwq3t"]
 size = Vector2(675.5, 124.5)
 
-[node name="enemy" type="CharacterBody2D"]
+[node name="enemy" type="CharacterBody2D" groups=["enemy"]]
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("1_srpca")

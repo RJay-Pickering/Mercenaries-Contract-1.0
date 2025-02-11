@@ -11,8 +11,12 @@ config_version=5
 [application]
 
 config/name="Mercenaries Contract"
-run/main_scene="res://world.tscn"
+run/main_scene="res://main_menu.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
+run/max_fps=60
+boot_splash/show_image=false
+boot_splash/fullsize=false
+boot_splash/use_filter=false
 config/icon="res://icon.svg"
 
 [autoload]
@@ -22,6 +26,10 @@ Global="*res://global.gd"
 [display]
 
 window/stretch/mode="viewport"
+
+[global_group]
+
+enemy="all enemies"
 
 [input]
 

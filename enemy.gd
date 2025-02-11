@@ -59,11 +59,14 @@ func _physics_process(delta):
 	#var direction_to_player = (player.global_position - global_position).normalized()
 	## Update the direction based on the normalized direction_to_player
 	#player_detection.rotation = direction_to_player.angle()
-	if player_detection.is_colliding() and player_detection.get_collider().name == "player" or player_detection2.is_colliding() and player_detection2.get_collider().name == "player":
-		is_chasing = true
-	elif !ledgeCheckRight.is_colliding() or !ledgeCheckLeft.is_colliding():
-		is_chasing = true
-	elif not in_view:
+	if player.health > 0:
+		if player_detection.is_colliding() and player_detection.get_collider().name == "player" or player_detection2.is_colliding() and player_detection2.get_collider().name == "player":
+			is_chasing = true
+		elif !ledgeCheckRight.is_colliding() or !ledgeCheckLeft.is_colliding():
+			is_chasing = true
+		elif not in_view:
+			is_chasing = false
+	else:
 		is_chasing = false
 
 # Patrol behavior: move side-to-side until hitting a wall or ledge
