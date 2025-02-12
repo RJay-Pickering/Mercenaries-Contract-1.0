@@ -1,6 +1,9 @@
 extends CharacterBody2D
 
-var direction = Vector2.RIGHT
+@export var speed: float = 50.0
+@export var chase_speed: float = 100.0 # Speed when chasing the player
+@export var stop_distance: float = 63.0 # Distance to stop when near the player
+
 @onready var ledgeCheckRight: = $right
 @onready var ledgeCheckLeft: = $left
 @onready var sprite: = $AnimatedSprite2D
@@ -8,21 +11,24 @@ var direction = Vector2.RIGHT
 @onready var player_detection = $player_detection
 @onready var player_detection2 = $player_detection2
 
-
-var health = 100
-var damage_output = 10
+var direction = Vector2.RIGHT
+var health: int
+var damage_output: int
 var is_dead: bool = false
 var is_damaged: bool = false
 var is_chasing = false
 var dashed_through = false
 var loop_once = false
 var in_view = false
+var down_attacked = false
 
-@export var speed: float = 50.0
-@export var chase_speed: float = 100.0 # Speed when chasing the player
-@export var stop_distance: float = 63.0 # Distance to stop when near the player
 
 func _ready() -> void:
+	health = $ProgressBar.value
+	if self.name == "enemy":
+		damage_output = 10
+	elif self.name == "mid_enemy":
+		damage_output = 15
 	velocity = Vector2.ZERO
 
 func _physics_process(delta):
@@ -43,11 +49,17 @@ func _physics_process(delta):
 		queue_free()
 		$ProgressBar.visible = false
 	
-	# Check if damaged and apply knockback
-	if is_damaged:
+	# Check if damaged and not attacked by the player in the air and apply knockback
+	if is_damaged and not down_attacked:
 		dashed_through = false
 		var knockback_dir = global_position.direction_to(player.global_position)
-		velocity = knockback_dir * -250
+		velocity.x = knockback_dir.x * -250
+		velocity.y = knockback_dir.x * -25
+	elif down_attacked:
+		dashed_through = false
+		velocity = Vector2(0,0)
+		await get_tree().create_timer(0.5).timeout
+		down_attacked = false
 	elif dashed_through == false:
 		if is_chasing:
 			chase_player()
@@ -114,15 +126,6 @@ func damage_cooldown() -> void:
 
 func stun_logic():
 	velocity = Vector2(0,0)
-
-
-#func _on_visible_on_screen_notifier_2d_screen_entered() -> void:
-	#on_screen = true
-#
-#
-#func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
-	#is_chasing = false
-	#on_screen = false
 
 
 func _on_vision_zones_body_entered(body: Node2D) -> void:

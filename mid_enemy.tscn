@@ -50,7 +50,9 @@ offset_right = 32.0
 offset_bottom = -34.5
 theme_override_styles/background = SubResource("StyleBoxFlat_mrxsu")
 theme_override_styles/fill = SubResource("StyleBoxFlat_wk8uq")
-value = 100.0
+max_value = 75.0
+value = 75.0
+rounded = true
 
 [node name="left" type="RayCast2D" parent="."]
 position = Vector2(-31, 0)
@@ -72,17 +74,11 @@ position = Vector2(0, 11)
 rotation = 4.71239
 target_position = Vector2(0, 200)
 
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-position = Vector2(-0.749999, 0.25)
-scale = Vector2(1.725, 3.225)
-
 [node name="vision_zones" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="vision_zones"]
 position = Vector2(0, -16.5)
 shape = SubResource("RectangleShape2D_2fxny")
 
-[connection signal="screen_entered" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_entered"]
-[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
 [connection signal="body_entered" from="vision_zones" to="." method="_on_vision_zones_body_entered"]
 [connection signal="body_exited" from="vision_zones" to="." method="_on_vision_zones_body_exited"]

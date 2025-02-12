@@ -1,4 +1,4 @@
-sMake a new project to start making Gareth's move-set work and create a generic as F#@$ template platforming map. Do the starts and gets overtime stuff and upload it to Itch as a browser game to have Stanlee play-test and use it for map design and character art.
+Make a new project to start making Gareth's move-set work and create a generic as F#@$ template platforming map. Do the starts and gets overtime stuff and upload it to Itch as a browser game to have Stanlee play-test and use it for map design and character art.
 
 Starts:
 	- walking ✅

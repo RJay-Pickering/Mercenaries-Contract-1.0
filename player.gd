@@ -56,8 +56,8 @@ func _physics_process(delta: float) -> void:
 		has_jumped = false
 	
 	# handles when the user jumps on the wall to not keep going up wall
-	if is_on_wall():
-		velocity.y += 2500 * delta
+	#if is_on_wall():
+		#velocity.y += 2500 * delta
 	
 	if !is_damaged and !is_stunned and health > 0:
 		# Handle jump and if jump is big or small.
@@ -83,6 +83,8 @@ func _physics_process(delta: float) -> void:
 		# As good practice, you should replace UI actions with custom gameplay actions.
 		var direction := Input.get_axis("left", "right")
 		if direction:
+			# resets damage output when moving
+			damage_output = 0
 			if not is_wall_sliding:
 				velocity.x = direction * SPEED
 			
@@ -147,6 +149,7 @@ func _physics_process(delta: float) -> void:
 					print("left")
 					is_wall_sliding = true
 					velocity.y = min(velocity.y, wall_slide_gravity)
+					jump_count = 2
 					if Input.is_action_pressed("jump") and Input.is_action_pressed("right"):
 						velocity.y = JUMP_VELOCITY
 						velocity.x = 250
@@ -154,6 +157,7 @@ func _physics_process(delta: float) -> void:
 					print("right")
 					is_wall_sliding = true
 					velocity.y = min(velocity.y, wall_slide_gravity)
+					jump_count = 2
 					if Input.is_action_pressed("jump") and Input.is_action_pressed("left"):
 						velocity.y = JUMP_VELOCITY
 						velocity.x = -250
@@ -212,9 +216,9 @@ func player_collision_handler(change: bool):
 func attack_handler():
 	if !is_attacking:
 		if Input.is_action_pressed("attack") and Input.is_action_pressed("up_attack"):
-			damage_output = 1
+			damage_output = 5
 			attacking_position = "up"
-			$AnimatedSprite2D.play("default")
+			$AnimatedSprite2D.play("attack_up")
 			is_attacking = true
 			$attack_range/attack_up.disabled = false
 			await get_tree().create_timer(0.25).timeout
@@ -224,9 +228,9 @@ func attack_handler():
 			is_attacking = false
 		
 		elif Input.is_action_pressed("attack") and Input.is_action_pressed("down_attack"):
-			damage_output = 1
+			damage_output = 5
 			attacking_position = "down"
-			$AnimatedSprite2D.play("default")
+			$AnimatedSprite2D.play("attack_down")
 			is_attacking = true
 			$attack_range/attack_down.disabled = false
 			await get_tree().create_timer(0.25).timeout
@@ -240,9 +244,10 @@ func attack_handler():
 		
 		elif Input.is_action_just_released("attack"):
 			if damage_output < 5:
-				damage_output = 1
-			elif damage_output > 30:
-				damage_output = 30
+				damage_output = 5
+			elif damage_output > 20:
+				damage_output = 20
+			print(damage_output)
 			$AnimatedSprite2D.play("attack")
 			is_attacking = true
 			if facing_position == "left":
@@ -251,16 +256,19 @@ func attack_handler():
 				await get_tree().create_timer(0.25).timeout
 				$attack_range/attack_left.disabled = true
 				$AnimatedSprite2D.play("default")
-				await get_tree().create_timer(0.15).timeout
+				await get_tree().create_timer(0.25).timeout
 				is_attacking = false
+				damage_output = 0
+				
 			else:
 				attacking_position = "right"
 				$attack_range/attack_right.disabled = false
 				await get_tree().create_timer(0.25).timeout
 				$attack_range/attack_right.disabled = true
 				$AnimatedSprite2D.play("default")
-				await get_tree().create_timer(0.15).timeout
+				await get_tree().create_timer(0.25).timeout
 				is_attacking = false
+				damage_output = 0
 
 
 # Handle taking damage
@@ -294,7 +302,11 @@ func _on_attack_range_body_entered(body: Node2D) -> void:
 		$combo_timer.stop()
 		$combo_timer.start()
 		if attacking_position == "down":
-			velocity = Vector2(0, -700)
+			if facing_position == "left":
+				velocity = Vector2(0, -500)
+			elif facing_position == "left":
+				velocity = Vector2(0, -500)
+			body.down_attacked = true
 		
 		if damage_output > 10:
 			var half_combo = roundf(combo / 2)
