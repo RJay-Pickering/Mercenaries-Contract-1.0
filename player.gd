@@ -20,9 +20,11 @@ var is_stunned = false
 var loop_once = false
 var jump_count = 0
 var has_jumped = false
+var jump_released = false
 var is_wall_sliding = false
-var wall_slide_gravity = 100
-var wall_jump_push = 100
+var current_wall = ""
+var off_ground = false
+var wall_fall = 0
 var is_revived = false
 
 
@@ -34,7 +36,7 @@ func _physics_process(delta: float) -> void:
 	$CanvasLayer/ProgressBar.value = health
 	if is_revived:
 		if get_tree().get_node_count_in_group("enemy") > 0:
-			health -= 0.02
+			health -= 0.05
 		else:
 			is_revived = false
 			Global.can_second_wind = true
@@ -54,21 +56,23 @@ func _physics_process(delta: float) -> void:
 	else:
 		jump_count = 0
 		has_jumped = false
+		jump_released = false
 	
 	# handles when the user jumps on the wall to not keep going up wall
 	#if is_on_wall():
 		#velocity.y += 2500 * delta
 	
 	if !is_damaged and !is_stunned and health > 0:
-		# Handle jump and if jump is big or small.
-		if Input.is_action_just_released("jump") and velocity.y < 0: # handles small jumps
-			velocity.y = JUMP_VELOCITY / 2
 		if Global.can_double_jump: # handles double jumps
 			if Input.is_action_just_pressed("jump") and jump_count < 2 and not has_jumped:
 				jump_count += 1
 				if jump_count == 2:
 					has_jumped = true
 				velocity.y = JUMP_VELOCITY
+			elif Input.is_action_just_released("jump") and velocity.y < 0 and not jump_released: # handles small jumps
+				if velocity.y < (JUMP_VELOCITY / 2):
+					velocity.y = JUMP_VELOCITY / 2
+					jump_released = true
 		else: # handles big jumps and single jumps
 			if Input.is_action_just_pressed("jump") and is_on_floor():
 				velocity.y = JUMP_VELOCITY
@@ -76,11 +80,14 @@ func _physics_process(delta: float) -> void:
 			elif Input.is_action_just_pressed("jump") and not has_jumped:
 				velocity.y = JUMP_VELOCITY
 				has_jumped = true
+			elif Input.is_action_just_released("jump") and velocity.y < 0 and not jump_released: # handles small jumps
+				if velocity.y < (JUMP_VELOCITY / 2):
+					velocity.y = JUMP_VELOCITY / 2
+					jump_released = true
 		
 		attack_handler()
 		
 		# Get the input direction and handle the movement/deceleration.
-		# As good practice, you should replace UI actions with custom gameplay actions.
 		var direction := Input.get_axis("left", "right")
 		if direction:
 			# resets damage output when moving
@@ -129,6 +136,11 @@ func _physics_process(delta: float) -> void:
 				$dashing.start()
 				$can_dash.start()
 			hold_dash_count = 0
+		
+		if charge_dash:
+			player_collision_handler(true)
+		else:
+			player_collision_handler(false)
 	else:
 		if Input.is_action_just_pressed("dash") and can_dash:
 			dashing = true
@@ -138,38 +150,59 @@ func _physics_process(delta: float) -> void:
 			$can_dash.start()
 	
 	if Global.can_wall_jump:
-		if is_on_floor() and not is_on_wall() or is_on_floor():
+		if is_on_floor():
 			is_wall_sliding = false
+			current_wall = ""
+			off_ground = false
 		else:
+			 # When pressing down key, proceed to fall 
 			if Input.is_action_pressed("down_attack"):
 				is_wall_sliding = false
 			else:
-				# Handling wall slide and jump
-				if $left.is_colliding():
-					print("left")
+				# Handling wall slide and jump with cooldown
+				if $left.is_colliding() and current_wall == "right":
 					is_wall_sliding = true
-					velocity.y = min(velocity.y, wall_slide_gravity)
+					velocity.y = min(velocity.y, 100)
 					jump_count = 2
-					if Input.is_action_pressed("jump") and Input.is_action_pressed("right"):
+					if Input.is_action_pressed("right") and Input.is_action_pressed("jump"):
 						velocity.y = JUMP_VELOCITY
 						velocity.x = 250
-				elif $right.is_colliding():
-					print("right")
+						current_wall = "left"
+					elif Input.is_action_pressed("right"):
+						wall_fall += 0.5
+						if wall_fall >= 1:
+							is_wall_sliding = false
+							off_ground = false
+				elif $right.is_colliding() and current_wall == "left":
 					is_wall_sliding = true
-					velocity.y = min(velocity.y, wall_slide_gravity)
+					velocity.y = min(velocity.y, 100)
 					jump_count = 2
-					if Input.is_action_pressed("jump") and Input.is_action_pressed("left"):
+					if Input.is_action_pressed("left") and Input.is_action_pressed("jump"):
+						current_wall = "right"
 						velocity.y = JUMP_VELOCITY
 						velocity.x = -250
+					elif Input.is_action_pressed("left"):
+						wall_fall += 0.5
+						if wall_fall >= 1.5:
+							is_wall_sliding = false
+							off_ground = false
 				else:
-					is_wall_sliding = false
+					wall_fall = 0
+					if $left.is_colliding() and not off_ground:
+						current_wall = "right"
+						off_ground = true
+					elif $right.is_colliding() and not off_ground:
+						current_wall = "left"
+						off_ground = true
+					else:
+						is_wall_sliding = false
 	
-	if Global.can_background_walk:
-		if dashing:
-			player_collision_handler(true)
-		else:
-			player_collision_handler(false)
-	
+	#if Global.can_background_walk:
+		#if dashing:
+			#player_collision_handler(true)
+		#else:
+			#player_collision_handler(false)
+	#
 	
 	if is_stunned == true and health > 0:
 		if loop_once == false:
@@ -247,7 +280,6 @@ func attack_handler():
 				damage_output = 5
 			elif damage_output > 20:
 				damage_output = 20
-			print(damage_output)
 			$AnimatedSprite2D.play("attack")
 			is_attacking = true
 			if facing_position == "left":
@@ -298,7 +330,8 @@ func _on_can_dash_timeout() -> void:
 
 func _on_attack_range_body_entered(body: Node2D) -> void:
 	if body.name == "enemy" or body.name == "mid_enemy":
-		combo += 1
+		if combo < 3:
+			combo += 1
 		$combo_timer.stop()
 		$combo_timer.start()
 		if attacking_position == "down":

@@ -17,8 +17,6 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 			Global.can_charge_dash = true
 		elif Item_Skin.resource_path == "res://assets/wall jump.png":
 			Global.can_wall_jump = true
-		elif Item_Skin.resource_path == "res://assets/background walk.png":
-			Global.can_background_walk = true
-		elif Item_Skin.resource_path == "res://assets/second wind.png":\
+		elif Item_Skin.resource_path == "res://assets/second wind.png":
 			Global.can_second_wind = true
 		queue_free()

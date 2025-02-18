@@ -167,6 +167,7 @@ bg_color = Color(0, 0, 0, 1)
 bg_color = Color(0.141176, 0.45098, 0.682353, 1)
 
 [node name="player" type="CharacterBody2D"]
+slide_on_ceiling = false
 script = ExtResource("1_bysvt")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

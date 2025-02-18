@@ -103,11 +103,11 @@ func patrol():
 func chase_player():
 	var distance_to_player = position.distance_to(player.position)
 	
-	if distance_to_player > stop_distance:
-		var chase_direction = (player.position - position).normalized()
-		velocity.x = chase_direction.x * chase_speed
-	else:
-		velocity.x = 0
+	#if distance_to_player > stop_distance:
+	var chase_direction = (player.position - position).normalized()
+	velocity.x = chase_direction.x * chase_speed
+	#else:
+		#velocity.x = 0
 
 # Handle taking damage
 func take_damage(amount: int) -> void:

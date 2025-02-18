@@ -4,5 +4,4 @@ extends Node
 var can_double_jump = false
 var can_charge_dash = false
 var can_wall_jump = false
-var can_background_walk = false
 var can_second_wind = false
