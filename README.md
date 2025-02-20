@@ -32,11 +32,10 @@ Make a new project to start making Gareth's move-set work and create a generic a
 	- [ ] Talismans/charm type thing (not an upgrade but benefits the player, maybe they could be how the user does the "gets over time"...)
 
 
-4. NOTES AFTER INITIAL RELEASE:
-	- [x] If you spam jump, you can infinitely air jump even without double jump.
-	- [x] Be able to move off of the wall without jumping off.
-	- [x] Stop the player from speeding up the wall when holding jump and spamming left and right.
-	- [x] Burrow and Charged Dash should have the same ability.
-	- [x] You can only Burrow if you use the charged Dash.
-	- [x] Reaching the jump button at the peak of the long jump triggers a small extra boost. Then, you can double jump off that, even when the double jump ability is inactive.
-	- [x] Cap the combo at x3.
+4. Fixes to make:
+	- [x] So when the player dies, they drop their gold.
+	- [x] If the player dies, the gold is lost and replaced with the new loot drop.
+	- [x] If the player does not use second wind or does not have it, when its on screen, they will have 10 seconds to retrieve their stuff before it disappears.
+	- [x] If the player uses second winds but does not die, you keep gold in hand.
+	- [x] If the player uses the second wind but dies, you will drop the gold, but there is no time limit on when you can pick it up
+	- [x] If you use second wind and kill everything, your health resets to 100.
