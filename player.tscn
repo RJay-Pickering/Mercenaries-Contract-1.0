@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://d1ns6eo6ix1np"]
+[gd_scene load_steps=32 format=3 uid="uid://d1ns6eo6ix1np"]
 
 [ext_resource type="Script" path="res://player.gd" id="1_bysvt"]
 [ext_resource type="Texture2D" uid="uid://7xx1na5evsm0" path="res://assets/testy, the sprite.png" id="1_ph7ro"]
@@ -166,6 +166,10 @@ bg_color = Color(0, 0, 0, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5dxbg"]
 bg_color = Color(0.141176, 0.45098, 0.682353, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_o65uc"]
+font_size = 20
+font_color = Color(0.908673, 0.736697, 1.15514e-06, 1)
+
 [node name="player" type="CharacterBody2D"]
 slide_on_ceiling = false
 script = ExtResource("1_bysvt")
@@ -251,6 +255,16 @@ offset_bottom = 70.0
 theme_override_styles/background = SubResource("StyleBoxFlat_ej13d")
 theme_override_styles/fill = SubResource("StyleBoxFlat_5dxbg")
 value = 100.0
+
+[node name="coins" type="Label" parent="CanvasLayer/ProgressBar"]
+offset_left = 902.0
+offset_top = 4.0
+offset_right = 1069.0
+offset_bottom = 32.0
+text = "Coins: "
+label_settings = SubResource("LabelSettings_o65uc")
+horizontal_alignment = 2
+uppercase = true
 
 [node name="SecondWindMenu" parent="CanvasLayer" instance=ExtResource("4_w2j36")]
 visible = false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://epond2n2lg8s"]
+[gd_scene load_steps=19 format=4 uid="uid://epond2n2lg8s"]
 
 [ext_resource type="Texture2D" uid="uid://cuwfdkf15ds1d" path="res://assets/tiles.png" id="1_vkfca"]
 [ext_resource type="Texture2D" uid="uid://ccgxkkspb0bpn" path="res://assets/angle.png" id="2_3xwe4"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://xsyy4sg2aqoa" path="res://assets/wall jump.png" id="5_pvdy0"]
 [ext_resource type="Texture2D" uid="uid://bo53j818yi1vt" path="res://assets/second wind.png" id="7_q6eic"]
 [ext_resource type="PackedScene" uid="uid://cbi58p5yf7ti4" path="res://enemy.tscn" id="8_6hosq"]
+[ext_resource type="Texture2D" uid="uid://f4l4pql37w0g" path="res://assets/coin.png" id="8_s8v8d"]
 [ext_resource type="PackedScene" uid="uid://ce8cco8qt3edo" path="res://mid_enemy.tscn" id="10_g0b5e"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xpssh"]
@@ -127,13 +128,12 @@ horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="tutorial7" type="Label" parent="."]
-offset_left = 63.0
-offset_top = -825.0
-offset_right = 370.0
-offset_bottom = -724.0
+offset_left = 56.0
+offset_top = -816.0
+offset_right = 363.0
+offset_bottom = -715.0
 text = "Charged Dash:
-Press and Hold [shift] 
-or [tab]
+Press and Hold [shift]
 You can now burrow..."
 horizontal_alignment = 1
 autowrap_mode = 3
@@ -159,10 +159,10 @@ horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="tutorial10" type="Label" parent="."]
-offset_left = 58.0
-offset_top = -727.0
-offset_right = 365.0
-offset_bottom = -574.0
+offset_left = 59.0
+offset_top = -737.0
+offset_right = 366.0
+offset_bottom = -584.0
 text = "Burrow:
 When picked up, you can dash through orange blocks but only when you charge dash through...
 Go ahead and try it out on the orange block to the right."
@@ -195,6 +195,10 @@ Item_Skin = ExtResource("5_pvdy0")
 [node name="SecondWind" parent="." instance=ExtResource("5_j4xkd")]
 position = Vector2(88, 103)
 Item_Skin = ExtResource("7_q6eic")
+
+[node name="PlayerDeathItems" parent="." instance=ExtResource("5_j4xkd")]
+position = Vector2(-241, -282)
+Item_Skin = ExtResource("8_s8v8d")
 
 [node name="mid_enemy" parent="." instance=ExtResource("10_g0b5e")]
 position = Vector2(573, -189)

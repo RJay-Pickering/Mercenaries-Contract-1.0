@@ -26,7 +26,7 @@ var down_attacked = false
 func _ready() -> void:
 	health = $ProgressBar.value
 	if self.name == "enemy":
-		damage_output = 10
+		damage_output = 100
 	elif self.name == "mid_enemy":
 		damage_output = 15
 	velocity = Vector2.ZERO
@@ -46,6 +46,7 @@ func _physics_process(delta):
 	# Handle enemy death
 	if health <= 0 and not is_dead:
 		is_dead = true
+		Global.coins += 10
 		queue_free()
 		$ProgressBar.visible = false
 	

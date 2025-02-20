@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 @onready var status = $Label
 @onready var second_wind_menu = $CanvasLayer/SecondWindMenu
+@onready var coins_display = $CanvasLayer/ProgressBar/coins
 const SPEED = 450.0
 const DASH_SPEED = 900.0
 const JUMP_VELOCITY = -500.0
@@ -34,15 +35,17 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	$CanvasLayer/ProgressBar.value = health
+	coins_display.text = "Coins: " + str(Global.coins)
 	if is_revived:
 		if get_tree().get_node_count_in_group("enemy") > 0:
 			health -= 0.05
 		else:
+			health = 100
 			is_revived = false
-			Global.can_second_wind = true
-	if Global.can_second_wind and health <= 0:
+	if Global.can_second_wind and health <= 0 and not is_revived:
 		second_wind_handle()
 	elif health <= 0:
+		Global.death_punishment(position, is_revived)
 		var main_menu = ResourceLoader.load("res://main_menu.tscn")
 		get_tree().change_scene_to_packed(main_menu)
 	# Add the gravity.
@@ -57,10 +60,6 @@ func _physics_process(delta: float) -> void:
 		jump_count = 0
 		has_jumped = false
 		jump_released = false
-	
-	# handles when the user jumps on the wall to not keep going up wall
-	#if is_on_wall():
-		#velocity.y += 2500 * delta
 	
 	if !is_damaged and !is_stunned and health > 0:
 		if Global.can_double_jump: # handles double jumps
@@ -197,13 +196,6 @@ func _physics_process(delta: float) -> void:
 					else:
 						is_wall_sliding = false
 	
-	#if Global.can_background_walk:
-		#if dashing:
-			#player_collision_handler(true)
-		#else:
-			#player_collision_handler(false)
-	#
-	
 	if is_stunned == true and health > 0:
 		if loop_once == false:
 			loop_once = true
@@ -224,7 +216,6 @@ func second_wind_handle():
 	player_collision_handler(true)
 	velocity = Vector2(0,0)
 	if second_wind_menu.status == "alive":
-		Global.can_second_wind = false
 		health = 100
 		second_wind_menu.visible = false
 		if get_tree().get_node_count_in_group("enemy") > 0:
